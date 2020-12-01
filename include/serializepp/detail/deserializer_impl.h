@@ -1,22 +1,22 @@
 /*
  * Copyright (c) Levi van Rheenen. All rights reserved.
  */
-#ifndef SERIALIZEPP_SERIALIZER_IMPL_H
-#define SERIALIZEPP_SERIALIZER_IMPL_H
+#ifndef SERIALIZEPP_DESERIALIZER_IMPL_H
+#define SERIALIZEPP_DESERIALIZER_IMPL_H
 
 #include "concepts.h"
 #include "value_identity.h"
 
 namespace spp::detail {
 
-template<typename D, typename T>
+template<typename T, typename D>
 constexpr T call_deserializer(D& serializer) noexcept;
 
 }
 
-// #include "serializer_impl_container.h"
-// #include "serializer_impl_numeric.h"
-// #include "serializer_impl_algebraic.h"
+#include "deserializer_impl_container.h"
+#include "deserializer_impl_numeric.h"
+#include "deserializer_impl_algebraic.h"
 
 namespace spp::detail {
 
@@ -37,12 +37,12 @@ to the type.
 )");
 }
 
-template<typename D, typename T>
+template<typename T, typename D>
 constexpr T call_deserializer(D& deserializer) noexcept {
 	using Tp = std::remove_cvref_t<T>;
 
 	if constexpr (builtin_deserializable<Tp, D>) {
-		// serializer_impl<Tp>{}(deserializer, value);
+		return deserializer_impl<Tp>{}(deserializer);
 	} else if constexpr (user_defined_deserializable<Tp, D>) {
 		return T(deserializer);
 	} else {

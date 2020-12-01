@@ -76,28 +76,28 @@ struct serializer_impl<std::uint64_t> {
 };
 
 template<typename T>
-struct unsignedcast_serializer_impl : serializer_impl<std::make_unsigned_t<T>> {
+struct unsignedcast_serializer_impl {
 	template<typename S>
 	constexpr void operator()(S& output, T from) const noexcept {
-		serializer_impl<std::make_unsigned_t<T>>::operator()(output, (unsigned) from);
+		serializer_impl<std::make_unsigned_t<T>>{}(output, (unsigned) from);
 	}
 };
 
 template<typename From, typename To>
-struct staticcast_serializer_impl : serializer_impl<To> {
+struct staticcast_serializer_impl {
 	template<typename S>
 	constexpr void operator()(S& output, From from) const noexcept {
-		serializer_impl<To>::operator()(output, static_cast<To>(from));
+		serializer_impl<To>{}(output, static_cast<To>(from));
 	}
 };
 
 template<typename From, typename To>
-struct bitcast_serializer_impl : serializer_impl<To> {
+struct bitcast_serializer_impl {
 	template<typename S>
 	constexpr void operator()(S& output, From from) const noexcept {
 		To to;
 		std::memcpy(&to, &from, sizeof(From));
-		serializer_impl<To>::operator()(output, to);
+		serializer_impl<To>{}(output, to);
 	}
 };
 

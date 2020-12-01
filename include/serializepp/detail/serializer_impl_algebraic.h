@@ -39,12 +39,7 @@ struct serializer_impl<T> {
 
 	template<typename S, std::size_t... I>
 	constexpr void serialize_elements(S& output, const T& tuple, std::index_sequence<I...>) const noexcept {
-		(serialize_element<S, I>(output, tuple), ...);
-	}
-
-	template<typename S, std::size_t I>
-	constexpr void serialize_element(S& output, const T& tuple) const noexcept {
-		output(std::get<I>(tuple));
+		(output(std::get<I>(tuple)), ...);
 	}
 };
 

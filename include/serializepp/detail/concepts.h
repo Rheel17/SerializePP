@@ -95,7 +95,8 @@ concept optional_value = requires(const T t) {
 };
 
 template<typename T>
-concept optional_like = (optional_has_value<T> || std::convertible_to<T, bool>) && optional_value<T>;
+concept optional_like = (optional_has_value<T> || std::convertible_to<T, bool>) && optional_value<T> &&
+		std::is_default_constructible_v<T> && std::constructible_from<T, typename T::value_type>;
 
 }
 

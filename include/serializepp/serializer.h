@@ -4,9 +4,11 @@
 #ifndef SERIALIZEPP_SERIALIZER_H
 #define SERIALIZEPP_SERIALIZER_H
 
-#include "serializer_impl.h"
+#include "detail/serializer_impl.h"
 
-namespace spp::detail {
+#include <memory>
+
+namespace spp {
 
 template<detail::byte_output_iterator OutputIt, std::endian byte_order_value, typename Capture = void>
 class serializer {
@@ -34,12 +36,12 @@ private:
 		if constexpr (std::same_as<std::remove_cvref_t<T>, std::uint8_t>) {
 			_add_byte(value);
 		} else {
-			call_serializer(*this, value);
+			detail::call_serializer(*this, value);
 		}
 	}
 
 	constexpr void _add_byte(std::uint8_t byte) {
-		if constexpr (has_iter_value_t<OutputIt>) {
+		if constexpr (detail::has_iter_value_t<OutputIt>) {
 			*_writer++ = static_cast<std::iter_value_t<OutputIt>>(byte);
 		} else {
 			*_writer++ = byte;
