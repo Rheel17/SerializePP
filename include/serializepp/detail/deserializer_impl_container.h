@@ -4,9 +4,34 @@
 #ifndef SERIALIZEPP_DESERIALIZER_IMPL_CONTAINER_H
 #define SERIALIZEPP_DESERIALIZER_IMPL_CONTAINER_H
 
+#include "../type_pass.h"
+
 #include <ranges>
 
 namespace spp::detail {
+
+template<container T>
+struct deserializer_impl<T> {
+	template<typename D>
+	constexpr T operator()(D& input) const noexcept {
+		T values{};
+		auto size = input(type < std::uint64_t > {});
+
+		// TODO: check whether size fits std::size_t
+
+		if constexpr (has_reserve < T >) {
+			values.reserve(size);
+		}
+
+		for (std::size_t i = 0; i < size; i++) {
+			if constexpr (push_back_container < T >) {
+				values.push_back(input(type < T > {}));
+			} else if constexpr (insert_container < T >) {
+				values.insert(input(type < T > {}));
+			}
+		}
+	}
+};
 
 template<typename T, std::size_t N>
 struct deserializer_impl<std::array<T, N>> {
@@ -27,7 +52,7 @@ struct deserializer_impl<std::array<T, N>> {
 
 	template<typename D, std::size_t... I>
 	constexpr std::array<T, N> deserialize_immediate(D& input, std::index_sequence<I...>) const noexcept {
-		return { (I, detail::call_deserializer<T>(input))... };
+		return { (I, input(type < T > {}))... };
 	}
 };
 

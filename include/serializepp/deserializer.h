@@ -4,6 +4,7 @@
 #ifndef SERIALIZEPP_DESERIALIZER_H
 #define SERIALIZEPP_DESERIALIZER_H
 
+#include "type_pass.h"
 #include "detail/deserializer_impl.h"
 
 #include <memory>
@@ -23,14 +24,19 @@ public:
 			_reader(it),
 			_capture(std::move(capture)) {}
 
-	template<typename T1, typename... Ts>
-	constexpr void operator()(T1& value, Ts& ... values) noexcept {
-		std::tie(value, values...) = deserialize<T1, Ts...>();
+	template<typename T>
+	constexpr T operator()(type<T>) {
+		return _deserialize<T>();
+	}
+
+	template<typename... Ts>
+	constexpr std::tuple<Ts...> operator()(types<Ts...>) {
+		return { _deserialize<Ts>()... };
 	}
 
 	template<typename T1, typename... Ts>
-	constexpr std::tuple<T1, Ts...> deserialize() noexcept {
-		return { _deserialize<T1>(), _deserialize<Ts>()... };
+	constexpr void operator()(T1& value, Ts& ... values) noexcept {
+		std::tie(value, values...) = operator()(types<T1, Ts...>{});
 	}
 
 private:

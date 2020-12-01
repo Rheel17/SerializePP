@@ -76,8 +76,27 @@ concept byte_input_range = std::ranges::range<R> && byte_input_iterator<std::ran
 // containers //
 ////////////////
 
-template<typename C>
-concept container = true;
+template<typename T>
+concept push_back_container = std::is_default_constructible_v<T> && requires {
+	typename T::value_type;
+} && requires(T& container, typename T::value_type&& value) {
+	{ container.push_back(std::move(value)) };
+};
+
+template<typename T>
+concept insert_container = std::is_default_constructible_v<T> && requires {
+	typename T::value_type;
+} && requires(T& container, typename T::value_type&& value) {
+	{ container.insert(std::move(value)) };
+};
+
+template<typename T>
+concept container = push_back_container<T> || insert_container<T>;
+
+template<typename T>
+concept has_reserve = requires(T& container, std::size_t size) {
+	{ container.reserve(size) };
+};
 
 ///////////////
 // optionals //
