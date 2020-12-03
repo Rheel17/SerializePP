@@ -18,7 +18,7 @@ struct deserializer_impl<T> {
 		input(has_value);
 
 		if (has_value) {
-			return input(type < typename T::value_type > {});
+			return input(type<typename T::value_type>{});
 		} else {
 			return T{};
 		}
@@ -34,7 +34,7 @@ struct deserializer_impl<T> {
 
 	template<typename D, std::size_t... I>
 	constexpr T deserialize(D& input, std::index_sequence<I...>) const noexcept {
-		return { input(type < std::tuple_element_t<I, T>>{})... };
+		return { input(type<std::tuple_element_t<I, T>>{})... };
 	}
 };
 

@@ -15,19 +15,19 @@ struct deserializer_impl<T> {
 	template<typename D>
 	constexpr T operator()(D& input) const noexcept {
 		T values{};
-		auto size = input(type < std::uint64_t > {});
+		auto size = input(type<std::uint64_t>{});
 
 		// TODO: check whether size fits std::size_t
 
-		if constexpr (has_reserve < T >) {
+		if constexpr (has_reserve<T>) {
 			values.reserve(size);
 		}
 
 		for (std::size_t i = 0; i < size; i++) {
-			if constexpr (push_back_container < T >) {
-				values.push_back(input(type < T > {}));
-			} else if constexpr (insert_container < T >) {
-				values.insert(input(type < T > {}));
+			if constexpr (push_back_container<T>) {
+				values.push_back(input(type<typename T::value_type>{}));
+			} else if constexpr (insert_container<T>) {
+				values.insert(input(type<typename T::value_type>{}));
 			}
 		}
 	}
@@ -52,7 +52,7 @@ struct deserializer_impl<std::array<T, N>> {
 
 	template<typename D, std::size_t... I>
 	constexpr std::array<T, N> deserialize_immediate(D& input, std::index_sequence<I...>) const noexcept {
-		return { (I, input(type < T > {}))... };
+		return { (I, input(type<T>{}))... };
 	}
 };
 
