@@ -16,10 +16,10 @@ class serializer {
 public:
 	constexpr static std::endian byte_order = byte_order_value;
 
-	constexpr explicit serializer(OutputIt it) noexcept:
+	constexpr explicit serializer(OutputIt it) noexcept requires (std::is_void_v<Capture>) :
 			_writer(it) {}
 
-	constexpr serializer(OutputIt it, std::unique_ptr<Capture> capture) noexcept:
+	constexpr serializer(OutputIt it, std::unique_ptr<Capture> capture) noexcept requires (!std::is_void_v<Capture>) :
 			_writer(it),
 			_capture(std::move(capture)) {}
 
@@ -50,7 +50,7 @@ private:
 
 private:
 	OutputIt _writer;
-	std::unique_ptr<Capture> _capture;
+	std::conditional_t<std::is_void_v<Capture>, int, std::unique_ptr<Capture>> _capture{};
 };
 
 }

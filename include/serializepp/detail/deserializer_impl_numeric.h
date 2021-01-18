@@ -80,15 +80,15 @@ struct deserializer_impl<std::uint64_t> {
 			value |= static_cast<std::uint64_t>(b1) << 8u;
 			value |= static_cast<std::uint64_t>(b2) << 16u;
 			value |= static_cast<std::uint64_t>(b3) << 24u;
-			value |= static_cast<std::uint64_t>(b3) << 32u;
-			value |= static_cast<std::uint64_t>(b3) << 40u;
-			value |= static_cast<std::uint64_t>(b3) << 48u;
-			value |= static_cast<std::uint64_t>(b3) << 56u;
+			value |= static_cast<std::uint64_t>(b4) << 32u;
+			value |= static_cast<std::uint64_t>(b5) << 40u;
+			value |= static_cast<std::uint64_t>(b6) << 48u;
+			value |= static_cast<std::uint64_t>(b7) << 56u;
 		} else {
-			value |= static_cast<std::uint64_t>(b3) << 56u;
-			value |= static_cast<std::uint64_t>(b3) << 48u;
-			value |= static_cast<std::uint64_t>(b3) << 40u;
-			value |= static_cast<std::uint64_t>(b3) << 32u;
+			value |= static_cast<std::uint64_t>(b7) << 56u;
+			value |= static_cast<std::uint64_t>(b6) << 48u;
+			value |= static_cast<std::uint64_t>(b5) << 40u;
+			value |= static_cast<std::uint64_t>(b4) << 32u;
 			value |= static_cast<std::uint64_t>(b3) << 24u;
 			value |= static_cast<std::uint64_t>(b2) << 16u;
 			value |= static_cast<std::uint64_t>(b1) << 8u;

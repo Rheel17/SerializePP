@@ -17,6 +17,7 @@ constexpr void call_serializer(S& serializer, const T& value) noexcept;
 #include "serializer_impl_container.h"
 #include "serializer_impl_numeric.h"
 #include "serializer_impl_algebraic.h"
+#include "serializer_impl_enum.h"
 
 namespace spp::detail {
 

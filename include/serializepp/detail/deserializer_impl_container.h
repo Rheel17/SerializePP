@@ -30,6 +30,8 @@ struct deserializer_impl<T> {
 				values.insert(input(type<typename T::value_type>{}));
 			}
 		}
+
+		return values;
 	}
 };
 

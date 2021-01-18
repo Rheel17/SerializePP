@@ -6,6 +6,7 @@
 
 #include "serializer.h"
 #include "deserializer.h"
+#include "detail/size_write_iterator.h"
 
 #include <fstream>
 #include <filesystem>
@@ -34,9 +35,28 @@ constexpr auto serialize_to(std::basic_ostream<Char, CharTraits>& stream) noexce
 
 template<std::endian byte_order = std::endian::native>
 auto serialize_to(const std::filesystem::path& file) noexcept {
-	auto stream = std::make_unique<std::ofstream>(file);
+	auto stream = std::make_unique<std::ofstream>(file, std::ios::binary);
 	auto iterator = std::ostream_iterator<std::uint8_t>(*stream);
 	return serializer<decltype(iterator), byte_order, std::ofstream>(iterator, std::move(stream));
+}
+
+////////////////////////
+// serialization size //
+////////////////////////
+
+template<typename... T>
+constexpr std::size_t serialization_size(const T&... args) noexcept {
+	if constexpr (sizeof...(T) == 0) {
+		return 0;
+	} else {
+		std::size_t size = 0;
+		detail::size_write_iterator<std::uint8_t> dummy_iterator(&size);
+
+		auto serializer = serialize_to(dummy_iterator);
+		serializer(args...);
+		
+		return dummy_iterator.size();
+	}
 }
 
 ///////////////////
@@ -61,7 +81,7 @@ constexpr auto deserialize_from(std::basic_istream<Char, CharTraits>& stream) no
 
 template<std::endian byte_order = std::endian::native>
 auto deserialize_from(const std::filesystem::path& file) noexcept {
-	auto stream = std::make_unique<std::ifstream>(file);
+	auto stream = std::make_unique<std::ifstream>(file, std::ios::binary);
 	auto iterator = std::istream_iterator<std::uint8_t>(*stream);
 	return deserializer<decltype(iterator), byte_order, std::ifstream>(iterator, std::move(stream));
 }
@@ -73,15 +93,23 @@ auto deserialize_from(const char* filename) noexcept {
 
 }
 
-#define SPP_IMPLEMENT_DEFAULT(Type, ...)                                \
+#define SPP_IMPLEMENT_DEFAULT_DESERIALIZER(Type, ...)                   \
     template<typename Deserializer>                                     \
     constexpr explicit Type(Deserializer& deserialize) noexcept {       \
         deserialize(__VA_ARGS__);                                       \
     }                                                                   \
-                                                                        \
+
+
+#define SPP_IMPLEMENT_DEFAULT_SERIALIZER(Type, ...)                     \
     template<typename Serializer>                                       \
     constexpr void serialize(Serializer& serialize) const noexcept {    \
         serialize(__VA_ARGS__);                                         \
     }
+
+#define SPP_EXPAND(x) x
+
+#define SPP_IMPLEMENT_DEFAULT(Type, ...)                                \
+	SPP_IMPLEMENT_DEFAULT_DESERIALIZER(Type, __VA_ARGS__)           \
+	SPP_IMPLEMENT_DEFAULT_SERIALIZER(Type, __VA_ARGS__)
 
 #endif

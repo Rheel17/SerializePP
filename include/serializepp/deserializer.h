@@ -17,10 +17,10 @@ class deserializer {
 public:
 	constexpr static std::endian byte_order = byte_order_value;
 
-	constexpr explicit deserializer(InputIt it) noexcept:
+	constexpr explicit deserializer(InputIt it) noexcept requires (std::is_void_v<Capture>) :
 			_reader(it) {}
 
-	constexpr deserializer(InputIt it, std::unique_ptr<Capture> capture) noexcept:
+	constexpr deserializer(InputIt it, std::unique_ptr<Capture> capture) noexcept requires (!std::is_void_v<Capture>) :
 			_reader(it),
 			_capture(std::move(capture)) {}
 
@@ -54,7 +54,7 @@ private:
 	}
 
 	InputIt _reader;
-	std::unique_ptr<Capture> _capture;
+	std::conditional_t<std::is_void_v<Capture>, int, std::unique_ptr<Capture>> _capture;
 };
 
 }
