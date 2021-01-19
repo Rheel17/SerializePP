@@ -115,7 +115,8 @@ struct staticcast_deserializer_impl {
 	}
 };
 
-template<typename From, typename To>
+template<typename To, typename From>
+	requires (sizeof(To) == sizeof(From))
 struct bitcast_deserializer_impl {
 	template<typename D>
 	constexpr To operator()(D& input) const noexcept {
