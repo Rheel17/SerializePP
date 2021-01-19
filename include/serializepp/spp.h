@@ -75,14 +75,14 @@ constexpr auto deserialize_from(detail::byte_input_range auto& range) noexcept {
 
 template<std::endian byte_order = std::endian::native, typename Char, typename CharTraits>
 constexpr auto deserialize_from(std::basic_istream<Char, CharTraits>& stream) noexcept {
-	auto iterator = std::istream_iterator<std::uint8_t>(stream);
+	auto iterator = std::istream_iterator<std::uint8_t, Char, CharTraits>(stream);
 	return deserialize_from<byte_order>(iterator);
 }
 
 template<std::endian byte_order = std::endian::native>
 auto deserialize_from(const std::filesystem::path& file) noexcept {
 	auto stream = std::make_unique<std::ifstream>(file, std::ios::binary);
-	auto iterator = std::istream_iterator<std::uint8_t>(*stream);
+	auto iterator = std::istream_iterator<char>(*stream);
 	return deserializer<decltype(iterator), byte_order, std::ifstream>(iterator, std::move(stream));
 }
 
