@@ -12,13 +12,17 @@ template<optional_like T>
 struct serializer_impl<T> {
 	template<typename S>
 	constexpr void operator()(S& output, const T& opt) const noexcept {
-		if constexpr (optional_has_value < T >) {
-			output(opt.has_value());
+		bool has_value{};
+		if constexpr (optional_has_value<T>) {
+			has_value = opt.has_value();
 		} else if constexpr (std::convertible_to<T, bool>) {
-			output(static_cast<bool>(opt));
+			has_value = static_cast<bool>(opt);
 		}
 
-		output(opt.value());
+		output(has_value);
+		if (has_value) {
+			output(opt.value());
+		}
 	}
 };
 
