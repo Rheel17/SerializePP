@@ -79,7 +79,7 @@ template<typename T>
 struct unsignedcast_serializer_impl {
 	template<typename S>
 	constexpr void operator()(S& output, T from) const noexcept {
-		serializer_impl<std::make_unsigned_t<T>>{}(output, (unsigned) from);
+		serializer_impl<std::make_unsigned_t<T>>{}(output, (std::make_unsigned_t<T>) from);
 	}
 };
 

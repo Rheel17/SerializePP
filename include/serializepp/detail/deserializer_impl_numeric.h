@@ -25,17 +25,16 @@ struct deserializer_impl<std::uint16_t> {
 	template<typename D>
 	constexpr std::uint16_t operator()(D& input) const noexcept {
 		std::uint8_t b0, b1;
-		input(b0, b1);
-
-		std::uint16_t value = 0;
 
 		if constexpr (D::byte_order == std::endian::little) {
-			value |= static_cast<std::uint16_t>(b0) << 0u;
-			value |= static_cast<std::uint16_t>(b1) << 8u;
+			input(b0, b1);
 		} else {
-			value |= static_cast<std::uint16_t>(b1) << 8u;
-			value |= static_cast<std::uint16_t>(b0) << 0u;
+			input(b1, b0);
 		}
+
+		std::uint16_t value = 0;
+		value |= static_cast<std::uint16_t>(b0) << 0u;
+		value |= static_cast<std::uint16_t>(b1) << 8u;
 
 		return value;
 	}
@@ -46,21 +45,18 @@ struct deserializer_impl<std::uint32_t> {
 	template<typename D>
 	constexpr std::uint32_t operator()(D& input) const noexcept {
 		std::uint8_t b0, b1, b2, b3;
-		input(b0, b1, b2, b3);
-
-		std::uint32_t value = 0;
 
 		if constexpr (D::byte_order == std::endian::little) {
-			value |= static_cast<std::uint32_t>(b0) << 0u;
-			value |= static_cast<std::uint32_t>(b1) << 8u;
-			value |= static_cast<std::uint32_t>(b2) << 16u;
-			value |= static_cast<std::uint32_t>(b3) << 24u;
+			input(b0, b1, b2, b3);
 		} else {
-			value |= static_cast<std::uint32_t>(b3) << 24u;
-			value |= static_cast<std::uint32_t>(b2) << 16u;
-			value |= static_cast<std::uint32_t>(b1) << 8u;
-			value |= static_cast<std::uint32_t>(b0) << 0u;
+			input(b3, b2, b1, b0);
 		}
+
+		std::uint32_t value = 0;
+		value |= static_cast<std::uint32_t>(b0) << 0u;
+		value |= static_cast<std::uint32_t>(b1) << 8u;
+		value |= static_cast<std::uint32_t>(b2) << 16u;
+		value |= static_cast<std::uint32_t>(b3) << 24u;
 
 		return value;
 	}
@@ -71,29 +67,22 @@ struct deserializer_impl<std::uint64_t> {
 	template<typename D>
 	constexpr std::uint64_t operator()(D& input) const noexcept {
 		std::uint8_t b0, b1, b2, b3, b4, b5, b6, b7;
-		input(b0, b1, b2, b3, b4, b5, b6, b7);
-
-		std::uint64_t value = 0;
 
 		if constexpr (D::byte_order == std::endian::little) {
-			value |= static_cast<std::uint64_t>(b0) << 0u;
-			value |= static_cast<std::uint64_t>(b1) << 8u;
-			value |= static_cast<std::uint64_t>(b2) << 16u;
-			value |= static_cast<std::uint64_t>(b3) << 24u;
-			value |= static_cast<std::uint64_t>(b4) << 32u;
-			value |= static_cast<std::uint64_t>(b5) << 40u;
-			value |= static_cast<std::uint64_t>(b6) << 48u;
-			value |= static_cast<std::uint64_t>(b7) << 56u;
+			input(b0, b1, b2, b3, b4, b5, b6, b7);
 		} else {
-			value |= static_cast<std::uint64_t>(b7) << 56u;
-			value |= static_cast<std::uint64_t>(b6) << 48u;
-			value |= static_cast<std::uint64_t>(b5) << 40u;
-			value |= static_cast<std::uint64_t>(b4) << 32u;
-			value |= static_cast<std::uint64_t>(b3) << 24u;
-			value |= static_cast<std::uint64_t>(b2) << 16u;
-			value |= static_cast<std::uint64_t>(b1) << 8u;
-			value |= static_cast<std::uint64_t>(b0) << 0u;
+			input(b7, b6, b5, b4, b3, b2, b1, b0);
 		}
+
+		std::uint64_t value = 0;
+		value |= static_cast<std::uint64_t>(b0) << 0u;
+		value |= static_cast<std::uint64_t>(b1) << 8u;
+		value |= static_cast<std::uint64_t>(b2) << 16u;
+		value |= static_cast<std::uint64_t>(b3) << 24u;
+		value |= static_cast<std::uint64_t>(b4) << 32u;
+		value |= static_cast<std::uint64_t>(b5) << 40u;
+		value |= static_cast<std::uint64_t>(b6) << 48u;
+		value |= static_cast<std::uint64_t>(b7) << 56u;
 
 		return value;
 	}
@@ -103,7 +92,7 @@ template<typename T>
 struct unsignedcast_deserializer_impl {
 	template<typename D>
 	constexpr T operator()(D& input) const noexcept {
-		return (signed) deserializer_impl<std::make_unsigned_t<T>>{}(input);
+		return (T) deserializer_impl<std::make_unsigned_t<T>>{}(input);
 	}
 };
 
@@ -115,8 +104,7 @@ struct staticcast_deserializer_impl {
 	}
 };
 
-template<typename To, typename From>
-	requires (sizeof(To) == sizeof(From))
+template<typename To, typename From> requires (sizeof(To) == sizeof(From))
 struct bitcast_deserializer_impl {
 	template<typename D>
 	constexpr To operator()(D& input) const noexcept {
