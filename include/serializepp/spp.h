@@ -87,11 +87,6 @@ auto deserialize_from(const std::filesystem::path& file) noexcept {
 	return deserializer<decltype(iterator), byte_order, std::ifstream>(iterator, std::move(stream));
 }
 
-template<std::endian byte_order = std::endian::native>
-auto deserialize_from(const char* filename) noexcept {
-	return deserialize_from<byte_order>(std::filesystem::path(filename));
-}
-
 }
 
 #define SPP_IMPLEMENT_DEFAULT_DESERIALIZER(Type, ...)                   \
