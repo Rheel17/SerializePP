@@ -18,7 +18,7 @@ class deserializer_base {
 };
 
 template<detail::byte_input_iterator InputIt, std::endian byte_order_value, typename Capture = void>
-class deserializer {
+class deserializer : public deserializer_base {
 
 public:
 	constexpr static std::endian byte_order = byte_order_value;
