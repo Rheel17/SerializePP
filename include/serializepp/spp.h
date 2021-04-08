@@ -90,15 +90,15 @@ auto deserialize_from(const std::filesystem::path& file) noexcept {
 }
 
 #define SPP_IMPLEMENT_DEFAULT_DESERIALIZER(Type, ...)                   \
-    template<typename Deserializer>                                     \
-    constexpr explicit Type(Deserializer& deserialize) noexcept {       \
+    template<std::derived_from<spp::deserializer_base> Deserializer>    \
+    constexpr explicit Type(Deserializer& deserialize) {                \
         deserialize(__VA_ARGS__);                                       \
     }                                                                   \
 
 
 #define SPP_IMPLEMENT_DEFAULT_SERIALIZER(Type, ...)                     \
-    template<typename Serializer>                                       \
-    constexpr void serialize(Serializer& serialize) const noexcept {    \
+    template<std::derived_from<spp::serializer_base> Serializer>        \
+    constexpr void serialize(Serializer& serialize) const {             \
         serialize(__VA_ARGS__);                                         \
     }
 

@@ -28,8 +28,8 @@ Type is not serializable!
 
 For user-defined types to be serializable, add a public method
 
-	template<typename Serializer>
-	constexpr void serialize(Serializer& s) const noexcept {
+	template<std::derived_from<spp::serializer_base> Serializer>
+	constexpr void serialize(Serializer& s) const {
 		// ...
 	}
 

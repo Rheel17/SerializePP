@@ -28,14 +28,14 @@ Type is not deserializable!
 
 For user-defined types to be deserializable, add a public constructor
 
-	template<typename Deserializer>
-	explicit constexpr /*Type*/(Deserializer& d) noexcept {
+	template<std::derived_from<spp::deserializer_base> Deserializer>
+	explicit constexpr /*Type*/(Deserializer& d) {
 		// ...
 	}
 
 or a static method
 
-	template<typename Deserializer>
+	template<std::derived_from<spp::deserializer_base> Deserializer>
 	constexpr static /*Type*/ deserialize(Deserializer& d) noexcept {
 		// ...
 	}

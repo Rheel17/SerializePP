@@ -10,8 +10,14 @@
 
 namespace spp {
 
+class serializer_base {
+	template<detail::byte_output_iterator, std::endian, typename>
+	friend class serializer;
+	serializer_base() = default;
+};
+
 template<detail::byte_output_iterator OutputIt, std::endian byte_order_value, typename Capture = void>
-class serializer {
+class serializer : public serializer_base {
 
 public:
 	constexpr static std::endian byte_order = byte_order_value;

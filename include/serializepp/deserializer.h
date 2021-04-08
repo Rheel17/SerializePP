@@ -11,6 +11,12 @@
 
 namespace spp {
 
+class deserializer_base {
+	template<detail::byte_input_iterator, std::endian, typename>
+	friend class deserializer;
+	deserializer_base() = default;
+};
+
 template<detail::byte_input_iterator InputIt, std::endian byte_order_value, typename Capture = void>
 class deserializer {
 
