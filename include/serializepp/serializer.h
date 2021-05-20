@@ -22,23 +22,23 @@ class serializer : public serializer_base {
 public:
 	constexpr static std::endian byte_order = byte_order_value;
 
-	constexpr explicit serializer(OutputIt it) noexcept requires (std::is_void_v<Capture>) :
+	constexpr explicit serializer(OutputIt it) requires (std::is_void_v<Capture>) :
 			_writer(it) {}
 
-	constexpr serializer(OutputIt it, std::unique_ptr<Capture> capture) noexcept requires (!std::is_void_v<Capture>) :
+	constexpr serializer(OutputIt it, std::unique_ptr<Capture> capture) requires (!std::is_void_v<Capture>) :
 			_writer(it),
 			_capture(std::move(capture)) {}
 
 	template<typename... Ts>
-	constexpr void operator()(const Ts& ... values) noexcept {
+	constexpr void operator()(const Ts& ... values) {
 		(_serialize(values), ...);
 	}
 
-	constexpr void operator()() noexcept = delete;
+	constexpr void operator()() = delete;
 
 private:
 	template<typename T>
-	constexpr void _serialize(const T& value) noexcept {
+	constexpr void _serialize(const T& value) {
 		if constexpr (std::same_as<std::remove_cvref_t<T>, std::uint8_t>) {
 			_add_byte(value);
 		} else {

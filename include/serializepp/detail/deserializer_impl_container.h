@@ -13,7 +13,7 @@ namespace spp::detail {
 template<container T>
 struct deserializer_impl<T> {
 	template<typename D>
-	constexpr T operator()(D& input) const noexcept {
+	constexpr T operator()(D& input) const {
 		T values{};
 		auto size = input(type<std::uint64_t>{});
 
@@ -38,7 +38,7 @@ struct deserializer_impl<T> {
 template<typename T, std::size_t N>
 struct deserializer_impl<std::array<T, N>> {
 	template<typename D>
-	constexpr std::array<T, N> operator()(D& input) const noexcept {
+	constexpr std::array<T, N> operator()(D& input) const {
 		if constexpr (std::is_default_constructible_v<T> && std::is_nothrow_move_assignable_v<T>) {
 			std::array<T, N> values{};
 
@@ -53,7 +53,7 @@ struct deserializer_impl<std::array<T, N>> {
 	}
 
 	template<typename D, std::size_t... I>
-	constexpr std::array<T, N> deserialize_immediate(D& input, std::index_sequence<I...>) const noexcept {
+	constexpr std::array<T, N> deserialize_immediate(D& input, std::index_sequence<I...>) const {
 		return { (I, input(type<T>{}))... };
 	}
 };

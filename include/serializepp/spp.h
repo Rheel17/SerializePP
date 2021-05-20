@@ -19,23 +19,23 @@ namespace spp {
 /////////////////
 
 template<std::endian byte_order = std::endian::native>
-constexpr auto serialize_to(detail::byte_output_iterator auto iterator) noexcept {
+constexpr auto serialize_to(detail::byte_output_iterator auto iterator) {
 	return serializer<decltype(iterator), byte_order>(iterator);
 }
 
 template<std::endian byte_order = std::endian::native>
-constexpr auto serialize_to(detail::byte_output_range auto& range) noexcept {
+constexpr auto serialize_to(detail::byte_output_range auto& range) {
 	return serialize_to<byte_order>(std::ranges::begin(range));
 }
 
 template<std::endian byte_order = std::endian::native, typename Char, typename CharTraits>
-constexpr auto serialize_to(std::basic_ostream<Char, CharTraits>& stream) noexcept {
+constexpr auto serialize_to(std::basic_ostream<Char, CharTraits>& stream) {
 	auto iterator = std::ostream_iterator<std::uint8_t> (stream);
 	return serialize_to<byte_order>(iterator);
 }
 
 template<std::endian byte_order = std::endian::native>
-auto serialize_to(const std::filesystem::path& file) noexcept {
+auto serialize_to(const std::filesystem::path& file) {
 	auto stream = std::make_unique<std::ofstream>(file, std::ios::binary);
 	auto iterator = std::ostream_iterator<std::uint8_t>(*stream);
 	return serializer<decltype(iterator), byte_order, std::ofstream>(iterator, std::move(stream));
@@ -46,7 +46,7 @@ auto serialize_to(const std::filesystem::path& file) noexcept {
 ////////////////////////
 
 template<typename... T>
-constexpr std::size_t serialization_size(const T&... args) noexcept {
+constexpr std::size_t serialization_size(const T&... args) {
 	if constexpr (sizeof...(T) == 0) {
 		return 0;
 	} else {
@@ -70,18 +70,18 @@ auto deserialize_from(detail::byte_input_iterator auto iterator) {
 }
 
 template<std::endian byte_order = std::endian::native>
-constexpr auto deserialize_from(detail::byte_input_range auto& range) noexcept {
+constexpr auto deserialize_from(detail::byte_input_range auto& range) {
 	return deserialize_from<byte_order>(std::ranges::begin(range));
 }
 
 template<std::endian byte_order = std::endian::native, typename Char, typename CharTraits>
-constexpr auto deserialize_from(std::basic_istream<Char, CharTraits>& stream) noexcept {
+constexpr auto deserialize_from(std::basic_istream<Char, CharTraits>& stream) {
 	auto iterator = detail::istream_iterator<Char, CharTraits>(stream);
 	return deserialize_from<byte_order>(iterator);
 }
 
 template<std::endian byte_order = std::endian::native>
-auto deserialize_from(const std::filesystem::path& file) noexcept {
+auto deserialize_from(const std::filesystem::path& file) {
 	auto stream = std::make_unique<std::ifstream>(file, std::ios::binary);
 	auto iterator = detail::istream_iterator<std::ifstream::char_type, std::ifstream::traits_type>(*stream);
 	return deserializer<decltype(iterator), byte_order, std::ifstream>(iterator, std::move(stream));

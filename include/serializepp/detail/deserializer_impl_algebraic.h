@@ -13,7 +13,7 @@ namespace spp::detail {
 template<optional_like T>
 struct deserializer_impl<T> {
 	template<typename D>
-	constexpr T operator()(D& input) const noexcept {
+	constexpr T operator()(D& input) const {
 		bool has_value;
 		input(has_value);
 
@@ -28,12 +28,12 @@ struct deserializer_impl<T> {
 template<tuple_like T>
 struct deserializer_impl<T> {
 	template<typename D>
-	constexpr T operator()(D& input) const noexcept {
+	constexpr T operator()(D& input) const {
 		return deserialize(input, std::make_index_sequence<std::tuple_size_v<T>>());
 	}
 
 	template<typename D, std::size_t... I>
-	constexpr T deserialize(D& input, std::index_sequence<I...>) const noexcept {
+	constexpr T deserialize(D& input, std::index_sequence<I...>) const {
 		return { input(type<std::tuple_element_t<I, T>>{})... };
 	}
 };

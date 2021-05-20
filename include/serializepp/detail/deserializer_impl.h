@@ -10,7 +10,7 @@
 namespace spp::detail {
 
 template<typename T, typename D>
-constexpr T call_deserializer(D& serializer) noexcept;
+constexpr T call_deserializer(D& serializer);
 
 }
 
@@ -36,7 +36,7 @@ For user-defined types to be deserializable, add a public constructor
 or a static method
 
 	template<std::derived_from<spp::deserializer_base> Deserializer>
-	constexpr static /*Type*/ deserialize(Deserializer& d) noexcept {
+	constexpr static /*Type*/ deserialize(Deserializer& d) {
 		// ...
 	}
 
@@ -46,7 +46,7 @@ to the type.
 }
 
 template<typename T, typename D>
-constexpr T call_deserializer(D& deserializer) noexcept {
+constexpr T call_deserializer(D& deserializer) {
 	using Tp = std::remove_cvref_t<T>;
 
 	if constexpr (builtin_deserializable<Tp, D>) {

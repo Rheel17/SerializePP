@@ -12,7 +12,7 @@ template<typename E>
 	requires std::is_enum_v<E>
 struct deserializer_impl<E> {
 	template<typename D>
-	constexpr E operator()(D& input) const noexcept {
+	constexpr E operator()(D& input) const {
 		std::underlying_type_t<E> value;
 		input(value);
 

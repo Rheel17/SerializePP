@@ -10,7 +10,7 @@
 namespace spp::detail {
 
 template<typename S, typename T>
-constexpr void call_serializer(S& serializer, const T& value) noexcept;
+constexpr void call_serializer(S& serializer, const T& value);
 
 }
 
@@ -39,7 +39,7 @@ to the type.
 }
 
 template<typename S, typename T>
-constexpr void call_serializer(S& serializer, const T& value) noexcept {
+constexpr void call_serializer(S& serializer, const T& value) {
 	using Tp = std::remove_cvref_t<T>;
 
 	if constexpr (builtin_serializable<Tp, S>) {

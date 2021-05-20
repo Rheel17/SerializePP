@@ -12,7 +12,7 @@ namespace spp::detail {
 template<>
 struct serializer_impl<std::uint8_t> {
 	template<typename S>
-	constexpr void operator()(S& output, std::uint8_t value) const noexcept {
+	constexpr void operator()(S& output, std::uint8_t value) const {
 		output(static_cast<std::uint8_t>(value));
 	}
 };
@@ -20,7 +20,7 @@ struct serializer_impl<std::uint8_t> {
 template<>
 struct serializer_impl<std::uint16_t> {
 	template<typename S>
-	constexpr void operator()(S& output, std::uint16_t value) const noexcept {
+	constexpr void operator()(S& output, std::uint16_t value) const {
 		if constexpr (S::byte_order == std::endian::little) {
 			output(static_cast<std::uint8_t>((value >> 0u) & 0xFFu));
 			output(static_cast<std::uint8_t>((value >> 8u) & 0xFFu));
@@ -34,7 +34,7 @@ struct serializer_impl<std::uint16_t> {
 template<>
 struct serializer_impl<std::uint32_t> {
 	template<typename S>
-	constexpr void operator()(S& output, std::uint32_t value) const noexcept {
+	constexpr void operator()(S& output, std::uint32_t value) const {
 		if constexpr (S::byte_order == std::endian::little) {
 			output(static_cast<std::uint8_t>((value >> 0u) & 0xFFu));
 			output(static_cast<std::uint8_t>((value >> 8u) & 0xFFu));
@@ -52,7 +52,7 @@ struct serializer_impl<std::uint32_t> {
 template<>
 struct serializer_impl<std::uint64_t> {
 	template<typename S>
-	constexpr void operator()(S& output, std::uint64_t value) const noexcept {
+	constexpr void operator()(S& output, std::uint64_t value) const {
 		if constexpr (S::byte_order == std::endian::little) {
 			output(static_cast<std::uint8_t>((value >> 0u) & 0xFFu));
 			output(static_cast<std::uint8_t>((value >> 8u) & 0xFFu));
@@ -78,7 +78,7 @@ struct serializer_impl<std::uint64_t> {
 template<typename T>
 struct unsignedcast_serializer_impl {
 	template<typename S>
-	constexpr void operator()(S& output, T from) const noexcept {
+	constexpr void operator()(S& output, T from) const {
 		serializer_impl<std::make_unsigned_t<T>>{}(output, (std::make_unsigned_t<T>) from);
 	}
 };
@@ -86,7 +86,7 @@ struct unsignedcast_serializer_impl {
 template<typename From, typename To>
 struct staticcast_serializer_impl {
 	template<typename S>
-	constexpr void operator()(S& output, From from) const noexcept {
+	constexpr void operator()(S& output, From from) const {
 		serializer_impl<To>{}(output, static_cast<To>(from));
 	}
 };
@@ -94,7 +94,7 @@ struct staticcast_serializer_impl {
 template<typename From, typename To>
 struct bitcast_serializer_impl {
 	template<typename S>
-	constexpr void operator()(S& output, From from) const noexcept {
+	constexpr void operator()(S& output, From from) const {
 		To to;
 		std::memcpy(&to, &from, sizeof(From));
 		serializer_impl<To>{}(output, to);

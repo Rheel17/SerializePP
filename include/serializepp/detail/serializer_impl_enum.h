@@ -12,7 +12,7 @@ template<typename E>
 	requires std::is_enum_v<E>
 struct serializer_impl<E> {
 	template<typename S>
-	constexpr void operator()(S& output, E value) const noexcept {
+	constexpr void operator()(S& output, E value) const {
 		output(static_cast<std::underlying_type_t<E>>(value));
 	}
 };

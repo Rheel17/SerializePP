@@ -17,12 +17,12 @@ public:
 	using difference_type = std::ptrdiff_t;
 	using value_type = std::uint8_t;
 
-	constexpr istream_iterator() noexcept = default;
+	constexpr istream_iterator() = default;
 	constexpr istream_iterator(std::basic_istream<Char, CharTraits>& stream) : _stream(&stream) {
 		_read();
 	}
 
-	constexpr value_type& operator*() const noexcept { return _byte; }
+	constexpr value_type& operator*() const { return _byte; }
 
 	istream_iterator<Char, CharTraits>& operator++() {
 		_read();

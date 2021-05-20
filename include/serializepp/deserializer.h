@@ -23,10 +23,10 @@ class deserializer : public deserializer_base {
 public:
 	constexpr static std::endian byte_order = byte_order_value;
 
-	constexpr explicit deserializer(InputIt it) noexcept requires (std::is_void_v<Capture>) :
+	constexpr explicit deserializer(InputIt it) requires (std::is_void_v<Capture>) :
 			_reader(it) {}
 
-	constexpr deserializer(InputIt it, std::unique_ptr<Capture> capture) noexcept requires (!std::is_void_v<Capture>) :
+	constexpr deserializer(InputIt it, std::unique_ptr<Capture> capture) requires (!std::is_void_v<Capture>) :
 			_reader(it),
 			_capture(std::move(capture)) {}
 
@@ -41,13 +41,13 @@ public:
 	}
 
 	template<typename T1, typename... Ts>
-	constexpr void operator()(T1& value, Ts& ... values) noexcept {
+	constexpr void operator()(T1& value, Ts& ... values) {
 		std::tie(value, values...) = operator()(types<T1, Ts...>{});
 	}
 
 private:
 	template<typename T>
-	constexpr T _deserialize() noexcept {
+	constexpr T _deserialize() {
 		if constexpr (std::same_as<std::remove_cvref_t<T>, std::uint8_t>) {
 			return _read_byte();
 		} else {
@@ -55,7 +55,7 @@ private:
 		}
 	}
 
-	constexpr std::uint8_t _read_byte() noexcept {
+	constexpr std::uint8_t _read_byte() {
 		return static_cast<std::uint8_t>(*_reader++);
 	}
 

@@ -133,7 +133,7 @@ concept tuple_single_element_and_get = requires(const T t) {
 };
 
 template<typename T, std::size_t... I>
-constexpr bool tuple_has_element_and_get(std::index_sequence<I...>) noexcept {
+constexpr bool tuple_has_element_and_get(std::index_sequence<I...>) {
 	return (tuple_single_element_and_get<T, I> && ... && true);
 }
 

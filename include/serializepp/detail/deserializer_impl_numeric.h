@@ -12,7 +12,7 @@ namespace spp::detail {
 template<>
 struct deserializer_impl<std::uint8_t> {
 	template<typename D>
-	constexpr std::uint8_t operator()(D& input) const noexcept {
+	constexpr std::uint8_t operator()(D& input) const {
 		std::uint8_t b0;
 		input(b0);
 
@@ -23,7 +23,7 @@ struct deserializer_impl<std::uint8_t> {
 template<>
 struct deserializer_impl<std::uint16_t> {
 	template<typename D>
-	constexpr std::uint16_t operator()(D& input) const noexcept {
+	constexpr std::uint16_t operator()(D& input) const {
 		std::uint8_t b0, b1;
 
 		if constexpr (D::byte_order == std::endian::little) {
@@ -43,7 +43,7 @@ struct deserializer_impl<std::uint16_t> {
 template<>
 struct deserializer_impl<std::uint32_t> {
 	template<typename D>
-	constexpr std::uint32_t operator()(D& input) const noexcept {
+	constexpr std::uint32_t operator()(D& input) const {
 		std::uint8_t b0, b1, b2, b3;
 
 		if constexpr (D::byte_order == std::endian::little) {
@@ -65,7 +65,7 @@ struct deserializer_impl<std::uint32_t> {
 template<>
 struct deserializer_impl<std::uint64_t> {
 	template<typename D>
-	constexpr std::uint64_t operator()(D& input) const noexcept {
+	constexpr std::uint64_t operator()(D& input) const {
 		std::uint8_t b0, b1, b2, b3, b4, b5, b6, b7;
 
 		if constexpr (D::byte_order == std::endian::little) {
@@ -91,7 +91,7 @@ struct deserializer_impl<std::uint64_t> {
 template<typename T>
 struct unsignedcast_deserializer_impl {
 	template<typename D>
-	constexpr T operator()(D& input) const noexcept {
+	constexpr T operator()(D& input) const {
 		return (T) deserializer_impl<std::make_unsigned_t<T>>{}(input);
 	}
 };
@@ -99,7 +99,7 @@ struct unsignedcast_deserializer_impl {
 template<typename To, typename From>
 struct staticcast_deserializer_impl {
 	template<typename D>
-	constexpr To operator()(D& input) const noexcept {
+	constexpr To operator()(D& input) const {
 		return static_cast<To>(deserializer_impl<From>{}(input));
 	}
 };
@@ -107,7 +107,7 @@ struct staticcast_deserializer_impl {
 template<typename To, typename From> requires (sizeof(To) == sizeof(From))
 struct bitcast_deserializer_impl {
 	template<typename D>
-	constexpr To operator()(D& input) const noexcept {
+	constexpr To operator()(D& input) const {
 		From from = deserializer_impl<From>{}(input);
 
 		To to;

@@ -17,23 +17,23 @@ public:
 	using difference_type = std::ptrdiff_t;
 	using value_type = T;
 
-	constexpr size_write_iterator() noexcept : _size(nullptr) {}
-	constexpr size_write_iterator(std::size_t* sz) noexcept : _size(sz) {}
+	constexpr size_write_iterator() : _size(nullptr) {}
+	constexpr size_write_iterator(std::size_t* sz) : _size(sz) {}
 
-	constexpr value_type& operator*() noexcept { return _dummy; }
+	constexpr value_type& operator*() { return _dummy; }
 
-	constexpr size_write_iterator<T>& operator++() noexcept {
+	constexpr size_write_iterator<T>& operator++() {
 		(*_size)++;
 		return *this;
 	}
 
-	constexpr size_write_iterator<T> operator++(int) noexcept {
+	constexpr size_write_iterator<T> operator++(int) {
 		auto copy = *this;
 		(*_size)++;
 		return copy;
 	}
 
-	constexpr std::size_t size() const noexcept { return *_size; }
+	constexpr std::size_t size() const { return *_size; }
 
 private:
 	T _dummy{};
